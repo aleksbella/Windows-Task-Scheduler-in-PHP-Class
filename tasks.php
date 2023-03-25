@@ -94,10 +94,10 @@ class Tasks {
 		return shell_exec(trim($command));
 	}
 }
-
-$tj = new Tasks('c:\test\test.bat');
-//echo $tj->create('hourly','April Schedule','01:45:00','04/01/2023');
+//**Uncomment below for Example or Testing**
+//$tj = new Tasks('c:\test\test.bat');
+//echo $tj->create('hourly','My Schedule','01:45:00','04/01/2023');
 //echo $tj->remove('oncess only');
-//echo '<pre>'.$tj->query('April Schedule').'</pre>';
-echo $tj->stop('April Schedule');
-//echo $tj->run('once only');
+//echo '<pre>'.$tj->query('My Schedule').'</pre>';
+//echo $tj->stop('My Schedule');
+//echo $tj->run('My Schedule');
