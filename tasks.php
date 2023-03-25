@@ -71,7 +71,7 @@ class Tasks {
 	}
 	public function update($task, $time, $newpath = null){
 		$path = $newpath == null ? $this->fullpath : $newpath;
-		$cmd = 'SCHTASKS /change /TN "'.$task.'" /TR "'.$path.'" /ST "'.$time.'"';
+		$cmd = 'SCHTASKS /CHANGE /TN "'.$task.'" /TR "'.$path.'" /ST "'.$time.'"';
 		return $this->execute($cmd);
 	}
 	public function remove($task){
@@ -82,8 +82,9 @@ class Tasks {
 		$cmd = 'SCHTASKS /RUN /TN "'.$task.'"';
 		return $this->execute($cmd);
 	}
-	public function query($task){
-		$cmd = 'SCHTASKS /QUERY /FO LIST /v /TN "'.$task.'"';
+	public function query($task, $format = null){
+		$fo = $format == null ? 'LIST' : $format;
+		$cmd = 'SCHTASKS /QUERY /FO '.$fo.' /V /TN "'.$task.'"';
 		return $this->execute($cmd);
 	}
 	public function stop($task){
@@ -91,13 +92,18 @@ class Tasks {
 		return $this->execute($cmd);
 	}
 	public function execute($command){
-		return shell_exec(trim($command));
+		$result = shell_exec(trim($command));
+		return $result == TRUE ? $result : 'ERROR: Unable to execute command';
 	}
 }
-//**Uncomment below for Example or Testing**
+/*
+ -- Uncomment below to test --
+*/
 //$tj = new Tasks('c:\test\test.bat');
-//echo $tj->create('hourly','My Schedule','01:45:00','04/01/2023');
+//echo $tj->create('hourly','Report Email','16:00:00','04/15/2023');
 //echo $tj->remove('oncess only');
-//echo '<pre>'.$tj->query('My Schedule').'</pre>';
-//echo $tj->stop('My Schedule');
-//echo $tj->run('My Schedule');
+//echo $tj->stop('Send Report Email');
+//echo '<pre>'.$tj->query('Report Email','list').'</pre>';
+//echo $tj->run('Send Report Email');
+//echo '<pre>'.$tj->execute("arp -a").'</p>';
+//echo $tj->update("Report Email","20:00:00","arp -a");
