@@ -16,6 +16,10 @@ A basic Windows Task Scheduler in PHP
   **Update:**
   
 	echo  $tj->update($task, $time, $newpath = null);
+	
+	> $task = task name
+	> $time = new time
+	> $newpath = new executable full path
 
   
   **Remove:**
@@ -26,7 +30,9 @@ A basic Windows Task Scheduler in PHP
 
 *View Task Information:*
 	
-	echo $tj->query('My Schedule');
+	echo query($task, $format = null);
+	
+	Default: $format = LIST (TABLE, LIST)
 
 *Stop Selected Task:*
 	
@@ -35,5 +41,11 @@ A basic Windows Task Scheduler in PHP
 *Force to run Selected Task:*
 	
 	echo $tj->run('My Schedule');
+
+*Also:*
+
+echo $tj->execute($command);
+
+To Run and Execute your own command using shell.
 
 
