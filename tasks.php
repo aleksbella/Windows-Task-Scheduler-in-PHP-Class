@@ -1,50 +1,103 @@
 <?php
-class Tasks {
-	private $torun;
-	private $execute;
-	
-	function __construct($torun) {
-		$this->torun = $torun;
-  }
-  public function create($task_type,$task_name,$tym){
-	 try {		
-	 	if(empty($task_type)) throw new Exception("Type is empty");
-		if(empty($task_name)) throw new Exception("Name is empty");
-		if(empty($tym)) throw new Exception("Time is empty");
+/*
+//===============================================================
+	* Name:	PHP Windows Task Scheduler
+	* Author: Aleks Bella
+	* Homepage: https://github.com/aleksbella
+	* Dated: 3/25/23
+	* Version: 0.1.2
+	* Note: Use with your own risk
+//===============================================================
+	# Format: create($type, $task, $time, $startdate = null);
+	# type: "hourly"
+	# task: "My Schedule - Preferred name"
+	# $time: "12:00:00";
+	# $startdate: "03/25/2023";
+//===============================================================	
+*/
 
-	  switch($task_type){
-		  default:	
-				case 'hourly':
-				$setcmd = 'SCHTASKS /CREATE /SC HOURLY /TN "'.$task_name.'" /TR "'.$this->torun.'" /ST '.$tym;
+class Tasks {
+	private $fullpath;
+	private $task_name = array('minutes','hourly','daily','weekly','monthly','once','onstart','onlogon');
+	public function __construct($fullpath){
+		$this->fullpath = $fullpath;
+	}
+	public function create($type, $task, $time, $startdate = null){
+			$start = $startdate == null ? date('m/d/Y') : $startdate;
+			$command = '';
+		try {
+			if(!in_array($type,$this->task_name)) throw new Exception("Invalid task type");
+			if(empty($task)) throw new Exception("No name added");
+			if(empty($time)) throw new Exception("No time added");
+			
+			switch($type){
+				case 'minutes':
+				$command = 'SCHTASKS /CREATE /SC MINUTE /MO 5 /SD "'.$start.'" /TN "'.$task.'" /TR "'.$this->fullpath.'" /ST "'.$time.'"';
 				break;
 				
+				case 'hourly':
+				$command = 'SCHTASKS /CREATE /SC HOURLY /SD "'.$start.'" /TN "'.$task.'" /TR "'.$this->fullpath.'" /ST "'.$time.'"';
+				break;
+				
+				default:
 				case 'daily':
-				$setcmd = 'SCHTASKS /CREATE /SC DAILY /TN "'.$task_name.'" /TR "'.$this->torun.'" /ST '.$tym;
+				$command = 'SCHTASKS /CREATE /SC DAILY /SD "'.$start.'" /TN "'.$task.'" /TR "'.$this->fullpath.'" /ST "'.$time.'"';
 				break;
 
 				case 'monthly':
-				$setcmd = 'SCHTASKS /CREATE /SC MONTHLY /D 15 /TN "'.$task_name.'" /TR "'.$this->torun.'" /ST '.$tym;
+				$command = 'SCHTASKS /CREATE /SC MONTHLY /D 15 /SD "'.$start.'" /TN "'.$task.'" /TR "'.$this->fullpath.'" /ST "'.$time.'"';
 				break;
 				
 				case 'weekly':
-				$setcmd = 'SCHTASKS /CREATE /SC WEEKLY /D SUN /TN "'.$task_name.'" /TR "'.$this->torun.'" /ST '.$tym;
+				$command = 'SCHTASKS /CREATE /SC WEEKLY /D SUN /TN "'.$task.'" /TR "'.$this->fullpath.'" /ST '.$time;
 				break;
-	  }
-	  	 return $this->execute($setcmd);
-		  
-		  
-	 }catch(Exception $e){
-		 return $e->getMessage();
-	 }
-  }
-  public function change($task_name, $tym){
-	  $se = 'SCHTASKS /CHANGE /TN "'.$task_name.'" /ST '. $tym;
-	  return $this->execute($se);
-  }
-  public function remove($task_name){
-	  return $this->execute('SCHTASKS /delete /TN "'.$task_name.'" /f');
-  }
-  public function execute($cmd){
-	  return shell_exec(trim($cmd));
-  }
+				
+				case 'once':
+				$command = 'SCHTASKS /CREATE /SC ONCE /SD "'.$start.'" /TN "'.$task.'" /TR "'.$this->fullpath.'" /ST "'.$time.'"';
+				break;
+				
+				case 'onstart':
+				$command = 'SCHTASKS /CREATE /SC ONSTART /SD "'.$start.'" /TN "'.$task.'" /TR "'.$this->fullpath.'" /ST "'.$time.'"';
+				break;
+				
+				case 'onlogon':
+				$command = 'SCHTASKS /CREATE /SC ONLOGON /SD "'.$start.'" /TN "'.$task.'" /TR "'.$this->fullpath.'" /ST "'.$time.'"';
+				break;				
+			}
+				return  $this->execute($command);
+		}catch(Exception $e){
+				return $e->getMessage();
+		}
+	}
+	public function update($task, $time, $newpath = null){
+		$path = $newpath == null ? $this->fullpath : $newpath;
+		$cmd = 'SCHTASKS /change /TN "'.$task.'" /TR "'.$path.'" /ST "'.$time.'"';
+		return $this->execute($cmd);
+	}
+	public function remove($task){
+		$cmd = 'SCHTASKS /DELETE /TN "'.$task.'" /F';
+		return $this->execute($cmd);
+	}
+	public function run($task){
+		$cmd = 'SCHTASKS /RUN /TN "'.$task.'"';
+		return $this->execute($cmd);
+	}
+	public function query($task){
+		$cmd = 'SCHTASKS /QUERY /FO LIST /v /TN "'.$task.'"';
+		return $this->execute($cmd);
+	}
+	public function stop($task){
+		$cmd = 'SCHTASKS /END /TN "'.$task.'"';
+		return $this->execute($cmd);
+	}
+	public function execute($command){
+		return shell_exec(trim($command));
+	}
 }
+
+$tj = new Tasks('c:\test\test.bat');
+//echo $tj->create('hourly','April Schedule','01:45:00','04/01/2023');
+//echo $tj->remove('oncess only');
+//echo '<pre>'.$tj->query('April Schedule').'</pre>';
+echo $tj->stop('April Schedule');
+//echo $tj->run('once only');
