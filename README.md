@@ -4,7 +4,7 @@ A basic Windows Task Scheduler in PHP
 # How to use:
 	
     include_once "./includes/tasks.php";
-  	$tj = new Tasks('test.bat');
+  	$tj = new Tasks('c:\test\test.bat'); //fullpath
   
   **Create:**   
 	echo $tj->create($type, $task, $time, $startdate = null);
