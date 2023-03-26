@@ -87,7 +87,7 @@ class Tasks {
 	
 	public function update($task, $time, $newpath = null){
 		$path = $newpath == null ? $this->fullpath : $newpath;
-		$cmd = 'SCHTASKS /CHANGE /TN "'.$task.'" /TR "'.$path.'" /ST "'.$time.'"';
+		$cmd = 'SCHTASKS /CHANGE '.trim($this->account['username'].' '.$this->account['password']).' /TN "'.$task.'" /TR "'.$path.'" /ST "'.$time.'"';
 		return $this->execute($cmd);
 	}
 	public function remove($task){
@@ -120,12 +120,3 @@ class Tasks {
 		return $this->execute('whoami');
 	}
 }
-
-//$tj = new Tasks('c:\test\test.bat');
-//echo $tj->create('weekly','weekly Report Email','16:00:00','04/15/2023');
-//echo $tj->remove('Report Emaile');
-//echo $tj->stop('Send Report Email');
-//echo '<pre>'.$tj->query('Report Email','list').'</pre>';
-//echo $tj->run('Send Report Email');
-//echo '<pre>'.$tj->execute("arp -a").'</p>';
-//echo $tj->update("Report Email","20:00:00","arp -a");
