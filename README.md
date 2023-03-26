@@ -2,15 +2,21 @@
 A basic Windows Task Scheduler in PHP
 
 # How to use:
-	
-    include_once "./includes/tasks.php";
-  	$tj = new Tasks('c:\test\test.bat'); //fullpath
+
+```
+include_once "./includes/tasks.php";
+$tj = new Tasks('c:\test\test.bat','domain\user','password');
+```
+
   
   **Create:**   
-	echo $tj->create($type, $task, $time, $startdate = null);
+  
+	$tj->create($type, $task, $time, $startdate = null);
 	
-	e.g.: 
+> Example:
+
 	$startdate = "04/01/2023"; //date('m/d/Y',strtotime(+1 week));
+	
 	$tj->create('weekly', 'My Schedule', '12:00:00', $startdate);
 
   **Update:**
@@ -21,31 +27,21 @@ A basic Windows Task Scheduler in PHP
 	> $time = new time
 	> $newpath = new executable full path
 
-  
-  **Remove:**
-  
-	echo  $tj->remove($task);
+ **Other:**
 
-**Other Example**
-
-*View Task Information:*
+	update($task, $time, $newpath = null) -> Update selected task
 	
-	echo query($task, $format = null);
+	remove($task) -> Remove selected task
 	
-	Default: $format = LIST (TABLE, LIST)
-
-*Stop Selected Task:*
+	run($task) -> Force to run selected task
 	
-	echo $tj->stop('My Schedule');
-
-*Force to run Selected Task:*
+	query($task, $format = null) -> View selected task informaton
 	
-	echo $tj->run('My Schedule');
-
-*Also:*
-
-echo $tj->execute($command);
-
-To Run and Execute your own command using shell.
-
+	queryAll() -> View all running task/schedule
+	
+	stop($task) -> Force to stop selected task
+	
+	execute($command) -> Execute other Windows Command
+	
+	
 
