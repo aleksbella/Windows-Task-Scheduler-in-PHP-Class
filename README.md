@@ -2,7 +2,7 @@
 A basic Windows Task Scheduler in PHP
 
 # How to use:
-Refer this link for other parameters and description: https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/schtasks-create
+
 ```
 include_once "./includes/tasks.php";
 $tj = new Tasks('domain\user','password');
@@ -36,8 +36,10 @@ $tj = new Tasks('domain\user','password');
 	
 	echo  $tj->update($data);
 	
-	
- **Other:**
+
+Refer this link for other parameters and description: https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/schtasks-create
+
+**Other:**
 	
 	remove($task) -> Remove selected task
 	
