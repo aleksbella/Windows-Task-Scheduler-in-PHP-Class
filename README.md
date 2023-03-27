@@ -2,34 +2,36 @@
 A basic Windows Task Scheduler in PHP
 
 # How to use:
-
+Refer this link for other parameters and description: https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/schtasks-create
 ```
 include_once "./includes/tasks.php";
-$tj = new Tasks('c:\test\test.bat','domain\user','password');
+$tj = new Tasks('domain\user','password');
 ```
-
   
   **Create:**   
   
-	$tj->create($type, $task, $time, $startdate = null);
+	$tj->create($array);
 	
 > Example:
 
 	$startdate = "04/01/2023"; //date('m/d/Y',strtotime(+1 week));
 	
-	$tj->create('weekly', 'My Schedule', '12:00:00', $startdate);
+	$data = array(
+		'sc' => 'monthly',
+		'tn' => 'Aleks Schedule',
+		'st' => '10:00:00',
+		'sd' => date('m/d/Y',strtotime("+1 MONTH")),					
+		'ed' => date('m/d/Y',strtotime("+7 MONTH")),					
+		'tr' => 'c:\folder\myapp.exe'
+	);
+	$tj->create($data);
 
   **Update:**
   
-	echo  $tj->update($task, $time, $newpath = null);
+	echo  $tj->update($array);
 	
-	> $task = task name
-	> $time = new time
-	> $newpath = new executable full path
-
+	
  **Other:**
-
-	update($task, $time, $newpath = null) -> Update selected task
 	
 	remove($task) -> Remove selected task
 	
