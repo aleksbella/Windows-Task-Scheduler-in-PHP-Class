@@ -101,7 +101,7 @@ class Tasks {
 		if($result){
 			return $result;
 		}else{
-			return 'ERROR: Unable to execute command: ' . $this->lastCmd($command);
+			return 'ERROR: Unable to execute command: ' . $this->lastCmd($command) . ' Tips: Check all parameters and its spelling and or the user privileges.';
 		}
 	}
 	
