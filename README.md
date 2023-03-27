@@ -5,26 +5,21 @@ A basic Windows Task Scheduler in PHP
 
 ```
 include_once "./includes/tasks.php";
-$tj = new Tasks('domain\user','password');
+$ab = new Tasks();
+
+or
+
+$ab = new Tasks('domain\user','password');
 ```
   
   **Create:**   
   
-	$tj->create($array);
-	
-> Example:
-
-	$startdate = "04/01/2023"; //date('m/d/Y',strtotime(+1 week));
-	
 	$data = array(
-		'sc' => 'monthly',
+		'sc' => 'monthly',		//'minutes','hourly','daily','weekly','monthly'
 		'tn' => 'Aleks Schedule',
-		'st' => '10:00:00',
-		'sd' => date('m/d/Y',strtotime("+1 MONTH")),					
-		'ed' => date('m/d/Y',strtotime("+7 MONTH")),					
-		'tr' => 'c:\folder\myapp.exe'
+		'tr' => 'c:\folder\myapp.exe'	//full path
 	);
-	$tj->create($data);
+	$ab->create($data);
 
   **Update:**
   
@@ -34,24 +29,24 @@ $tj = new Tasks('domain\user','password');
 		'tr' => 'c:\folder\new_myapp.exe'
 	);
 	
-	echo  $tj->update($data);
+	echo  $ab->update($data);
 	
 
 Refer this link for other parameters and description: https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/schtasks-create
 
-**Other:**
+**Other method:**
 	
-	remove($task) -> Remove selected task
+	$ab->remove($task) -> Remove selected task
 	
-	run($task) -> Force to run selected task
+	$ab->run($task) -> Force to run selected task
 	
-	query($task, $format = null) -> View selected task informaton
+	$ab->query($task, $format = null) -> View selected task informaton
 	
-	queryAll() -> View all running task/schedule
+	$ab->queryAll() -> View all running task/schedule
 	
-	stop($task) -> Force to stop selected task
+	$ab->stop($task) -> Force to stop selected task
 	
-	execute($command) -> Execute other Windows Command
+	$ab->execute($command) -> Execute other Windows Command
 	
 	
 
