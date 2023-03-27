@@ -28,7 +28,13 @@ $tj = new Tasks('domain\user','password');
 
   **Update:**
   
-	echo  $tj->update($array);
+  	$data = array(		
+		'tn' => 'Aleks Schedule',
+		'st' => '12:00:00',
+		'tr' => 'c:\folder\new_myapp.exe'
+	);
+	
+	echo  $tj->update($data);
 	
 	
  **Other:**
