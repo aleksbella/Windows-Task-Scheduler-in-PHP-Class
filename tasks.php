@@ -1,94 +1,78 @@
 <?php
 /*
 //===============================================================
-	* Name:	PHP Windows Task Scheduler
-	* Author: Aleks Bella
-	* Homepage: https://github.com/aleksbella
-	* Dated: 3/25/23
-	* Version: 0.1.2
-	* Note: Use with your own risk
+	 * @category  PHP, Command Line
+	 * @author    Aleks Bella <aleksite@programmer.net>
+	 * @copyright Copyright (c) 2023
+	 * @license   http://opensource.org/licenses/gpl-3.0.html GNU Public License
+	 * @link      https://github.com/aleksbella
+	 * @version   1.1.2
+//===============================================================
+// 	 *  USE WITH YOUR OWN RISK
 //===============================================================
 */
 
 class Tasks {
-	private $fullpath;
-	private $task_type = array('minutes','hourly','daily','weekly','monthly','once','onstart','onlogon');
-	private $username;
-	private $password;
-	private $account = array();
+	private $fullpath = '';
 	private $force = true;
-	
-	public function __construct($fullpath, $username = null, $password = null){
-		$this->fullpath = $fullpath;
+	private $username = '';
+	private $password = '';
+	private $account = array();
+	private $command_str = '';
+	private $task_type = array('minutes','hourly','daily','weekly','monthly');
+		
+	public function __construct($username = null, $password = null){
 		
 		if(!empty($username)){
-			$this->username = '/RU ' .$username;
+			$this->username = '/RU "' .$username.'"';
 		}
 		if(!empty($password) && !empty($username)){
-			$this->password = '/RP ' . $password;
+			$this->password = '/RP "' . $password.'"';
 		}
 		
-		$this->account = array(
-			'username' => is_null($this->username) ? '/RU ' . $this->whoami() : $this->username,
-			'password' => $this->password
-		);
-			
-	}
-	public function create($type, $task, $time, $startdate = null){
-			$start = $startdate == null ? date('m/d/Y') : date('m/d/Y',strtotime($startdate));
-			$command = '';
-			$overwrite = $this->force == true ? '/F' : '';
-			$case_str = '/SD "'.$start.'" /TN "'.$task.'" /TR "'.$this->fullpath.'" /ST "'.$time.'" ' . $overwrite;
-			$rurp = trim($this->account['username'].' '.$this->account['password']);
-		try {
-			if(!in_array($type,$this->task_type)) throw new Exception("Invalid task type");
-			if(empty($task)) throw new Exception("No name added");
-			if(empty($time)) throw new Exception("No time added");
-			
-			switch($type){
-				case 'minutes':
-				$command = 'SCHTASKS /CREATE '.$rurp.' /SC MINUTE /MO 5 ' . $case_str;
-				break;
-				
-				case 'hourly':
-				$command = 'SCHTASKS /CREATE '.$rurp.' /SC HOURLY ' . $case_str;
-				break;
-				
-				default:
-				case 'daily':
-				$command = 'SCHTASKS /CREATE '.$rurp.' /SC DAILY ' . $case_str;
-				break;
-
-				case 'monthly':
-				$command = 'SCHTASKS /CREATE '.$rurp.' /SC MONTHLY /D 15 ' . $case_str;
-				break;
-				
-				case 'weekly':
-				$command = 'SCHTASKS /CREATE '.$rurp.' /SC WEEKLY /D SUN /TN "'.$task.'" /TR "'.$this->fullpath.'" /ST '.$time;
-				break;
-				
-				case 'once':
-				$command = 'SCHTASKS /CREATE '.$rurp.' /SC ONCE ' . $case_str;
-				break;
-				
-				case 'onstart':
-				$command = 'SCHTASKS /CREATE '.$rurp.' /SC ONSTART ' . $case_str;
-				break;
-				
-				case 'onlogon':
-				$command = 'SCHTASKS /CREATE '.$rurp.' /SC ONLOGON' . $case_str;
-				break;
-			}
-				return  $this->execute($command);
-		}catch(Exception $e){
-				return $e->getMessage();
+		$this->account = array($this->username,$this->password);
+		
+		if($this->force){
+			$this->force = '/F';
 		}
 	}
+	public function create($data = array()){
+		try {
+			if(!isset($data['sc'])) throw new Exception("Schedule type is empty");
+			if(isset($data['sc']) && !in_array($data['sc'],$this->task_type)) throw new Exception("Invalid schedule type");			
+			if(!isset($data['tn'])) throw new Exception("No task name");
+			if(!isset($data['tr'])) throw new Exception("No task to run");			
+			$this->command_str = 'SCHTASKS /CREATE' . $this->builder($data).' '.$this->force;		
+			return  $this->execute($this->command_str);
+		}catch(Exception $e){
+			return $e->getMessage();
+		}
+	}
+	public function builder($mo){
+		//tr ru tn
+		$data = [];
+		$cmd = '';
+		if(is_array($mo)){
+			foreach($mo as $key => $val){
+				if(!empty($key)){
+					array_push($data,' /'.strtoupper($key).' "'. $val.'"');
+				}
+			}
+		}
+		foreach($data as $result){
+			$cmd .= $result;
+		}		
+		return trim(array_values($this->account)[0] . array_values($this->account)[1]) . $cmd;
+	}
 	
-	public function update($task, $time, $newpath = null){
-		$path = $newpath == null ? $this->fullpath : $newpath;
-		$cmd = 'SCHTASKS /CHANGE '.trim($this->account['username'].' '.$this->account['password']).' /TN "'.$task.'" /TR "'.$path.'" /ST "'.$time.'"';
-		return $this->execute($cmd);
+	public function update($data){
+		try{
+			if(array_key_exists('sc',$data)) throw new Exception("Schedule [sc] for update is not allowed");
+			$cmd = 'SCHTASKS /CHANGE '.$this->builder($data);
+			return $this->execute($cmd);
+		}catch(Exception $e){
+			return $e->getMessage();
+		}
 	}
 	public function remove($task){
 		$cmd = 'SCHTASKS /DELETE /TN "'.$task.'" /F';
@@ -114,9 +98,17 @@ class Tasks {
 	}
 	public function execute($command){
 		$result = shell_exec(trim($command));
-		return $result == TRUE ? $result : 'ERROR: Unable to execute command ' . $command;
+		if($result){
+			return $result;
+		}else{
+			return 'ERROR: Unable to execute command: ' . $this->lastCmd($command);
+		}
 	}
+	
 	protected function whoami(){
 		return $this->execute('whoami');
+	}
+	public function lastCmd($cmd){
+		return '<pre>'.$this->command_str = $cmd.'</pre>';
 	}
 }
