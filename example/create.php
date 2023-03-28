@@ -1,6 +1,21 @@
 <?php
+
+/*
+//===============================================================
+	 * @category  PHP, Command Line
+	 * @author    Aleks Bella <aleksite@programmer.net>
+	 * @copyright Copyright (c) 2023
+	 * @license   http://opensource.org/licenses/gpl-3.0.html GNU Public License
+	 * @link      https://github.com/aleksbella
+	 * @version   1.1.2
+//===============================================================
+// 	 *  USE WITH YOUR OWN RISK
+//===============================================================
+*/
+
 include "../tasks.php";
-$job = new Tasks('bat.bat');
+use AleksBella\Tools\AB\Tasks;
+$ab = new Tasks();
 ?>
 <!DOCTYPE html>
 <html>
@@ -32,8 +47,16 @@ $job = new Tasks('bat.bat');
 			<?php
 				if(isset($_POST['set'])){
 					extract($_POST);
-					echo $job->create($ttype,$tname,$ttime,$tdate);
+				
+					$data['sc'] = $ttype;
+					$data['tn'] = $tname;
+					$data['tr'] = 'notepad.exe';
+					$data['st'] = $ttime;
+					$data['st'] = $tdate;
+					
+					echo $ab->query('create',$data);
 				}
+				
 			?>
 		</div>
 			<div class="form-control space-y-4">
