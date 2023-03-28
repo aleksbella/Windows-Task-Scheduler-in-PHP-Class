@@ -27,7 +27,7 @@ $ab = new Tasks();
 	);
 	$ab->query('change',$data);
 
->**Note**: Scheduletype [sc] could NOT be change, returns error if added.
+>**Note**: Scheduletype ['sc'] could NOT be change, returns error if added.
 	
 ---
 
@@ -40,7 +40,7 @@ $data['s'] = 'computer';		//Name or IP address of a remote computer (with or wit
 $data['u'] = 'domain';			//Runs this command with the permissions of the specified user account. 
 $data['p'] = 'password';		//Password of the user account specified in the /u parameter. 
 $data['ru'] = 'domain\user|system';	//Runs the task with permissions of the specified user account.
-$data['rp'] = 'password';		//Specifies the password for the existing user account, or the user account specified by the /ru parameter.
+$data['rp'] = 'password';		//Password for the existing user account, or the user account specified by the ['ru'] parameter.
 $data['mo'] = 'modifiers';		//How often the task runs within its schedule type e.g. 'minute','daily','hourly','monthly','weekly','once', etc...
 $data['d'] = 'day';			//Weekly [MON - SUN...], Monthly [runs weekly each month by providing a value of FIRST, SECOND, THIRD, FOURTH, LAST].
 $data['m'] = 'month';			//The valid options include JAN - DEC and * (every month).
@@ -50,7 +50,7 @@ $data['ri'] = 'interval';		//Repetition interval for the scheduled task.
 $data['rl'] = 'level';			//Run Level for the job. LIMITED is the default value, HIGHEST for superuser accounts.
 $data['et'] = 'Endtime';		//Time of day that a minute or hourly task schedule ends in 24 hour format.
 $data['du'] = 'duration';		//Maximum length of time for a minute or hourly schedule in 24-hour format. Works with MINUTE & HOURLY schedule.
-$data['sd'] = 'Startdate';		//Date on which the task schedule starts. 
+$data['sd'] = 'Startdate';		//Date on which the task schedule starts. (Format: m/d/Y)
 $data['ed'] = 'Enddate';		//Date on which the schedule ends. It isn't valid in a ONCE, ONSTART, ONLOGON, or ONIDLE schedule.
 ```	
 
