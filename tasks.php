@@ -28,13 +28,13 @@ class Tasks {
 	public function build($data){
 			$data_str = '';
 		try {
-			if(!is_array($data))throw new Exception("Unable to process");
+			if(!is_array($data))throw new \Exception("Unable to process");
 				foreach($data as $k => $v){
 					$data_str .= '/' .strtoupper($k) . ' "' .$v.'" ';
 				}
 
 			return $data_str;
-		}catch(Exception $e){
+		}catch(\Exception $e){
 			return $e->getMessage();
 		}
 	}
@@ -47,7 +47,7 @@ class Tasks {
 	}
 	public function query($type,$data){
 		try {
-			if(!is_array($data)) throw new \Exception('Invalid data');
+			if(!is_array($data)) throw new \Exception('Invalid array of data');
 			if(isset($data['sc']) && !in_array($data['sc'],$this->sch_type)) throw new \Exception('Invalid schedule! Use: ' . $this->get_data($this->sch_type));
 			if(!in_array($type,$this->type)) throw new \Exception('Invalid schedule type! Use: ' . $this->get_data($this->type));
 			
