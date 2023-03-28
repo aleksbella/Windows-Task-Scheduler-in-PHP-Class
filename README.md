@@ -1,7 +1,7 @@
 # Windows-Task-Scheduler-in-PHP
 A basic Windows Task Scheduler in PHP
 
-## Usage:
+## Usage
 
 ```
 include_once "./includes/tasks.php";
@@ -9,7 +9,7 @@ use AleksBella\Tools\AB\Tasks;
 $ab = new Tasks();
 ```
   
-## Create:
+## Create
   
 	$data = array(
 		'sc' => 'monthly',		//'minute','hourly','daily','weekly','monthly', etc...
@@ -18,7 +18,7 @@ $ab = new Tasks();
 	);
 	$ab->query('create',$data);
 ---
-## Change or Update:
+## Change or Update
   
 	$data = array(		
 		'tn' => 'Aleks Schedule',
@@ -31,7 +31,7 @@ $ab = new Tasks();
 	
 ---
 
-## Other values:
+## Other values
 ```
 $data['sc'] = 'monthly';		//The schedule type ('minute','hourly','daily','weekly','monthly', etc...)
 $data['tn'] = 'My Schedule';		//Name for the task.
@@ -60,7 +60,7 @@ $data['ed'] = '12/31/2023';		//Date on which the schedule ends. It isn't valid i
 
 ---
 
-## Parameters:
+## Parameters
 ```
 $ab->query('delete',['tn'=>'My Schedule']);	//Remove selected schedule
 
@@ -68,3 +68,11 @@ $ab->query('end',['tn'=>'My Schedule']);	//Stop running schedule
 
 $ab->query('run',['tn'=>'My Schedule']);	//Run selected schedule
 ```
+
+## Contributing
+
+Contributions are always welcome!
+
+See `contributing.md` for ways to get started.
+
+Please adhere to this project's `code of conduct`.
