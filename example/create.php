@@ -52,7 +52,8 @@ $ab = new Tasks();
 					$data['tn'] = $tname;
 					$data['tr'] = 'notepad.exe';
 					$data['st'] = $ttime;
-					$data['st'] = $tdate;
+					$data['sd'] = date('m/d/Y',strtotime($tdate));
+					$data['tr'] = 'notepad.exe';
 					
 					echo $ab->query('create',$data);
 				}
