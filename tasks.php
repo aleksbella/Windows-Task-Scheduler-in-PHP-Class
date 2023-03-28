@@ -1,4 +1,5 @@
 <?php
+namespace AleksBella\Tools\AB;
 /*
 //===============================================================
 	 * @category  PHP, Command Line
@@ -13,102 +14,64 @@
 */
 
 class Tasks {
-	private $fullpath = '';
+	const AB = 'SCHTASKS';
+	private $cmd = '';
 	private $force = true;
-	private $username = '';
-	private $password = '';
-	private $account = array();
-	private $command_str = '';
-	private $task_type = array('minutes','hourly','daily','weekly','monthly');
-		
-	public function __construct($username = null, $password = null){
-		
-		if(!empty($username)){
-			$this->username = '/RU "' .$username.'"';
-		}
-		if(!empty($password) && !empty($username)){
-			$this->password = '/RP "' . $password.'"';
-		}
-		
-		$this->account = array($this->username,$this->password);
-		
-		if($this->force){
+	private $sch_type = array('minute','daily','hourly','monthly','weekly','once','onstart','onlogon');
+	private $type = array('change','create','delete','end','run','query');
+	public function __construct(){
+		if(is_bool($this->force)){
 			$this->force = '/F';
 		}
 	}
-	public function create($data = array()){
+	
+	public function build($data){
+			$data_str = '';
 		try {
-			if(!isset($data['sc'])) throw new Exception("Schedule type is empty");
-			if(isset($data['sc']) && !in_array($data['sc'],$this->task_type)) throw new Exception("Invalid schedule type");			
-			if(!isset($data['tn'])) throw new Exception("No task name");
-			if(!isset($data['tr'])) throw new Exception("No task to run");			
-			$this->command_str = 'SCHTASKS /CREATE' . $this->builder($data).' '.$this->force;		
-			return  $this->execute($this->command_str);
-		}catch(Exception $e){
-			return $e->getMessage();
-		}
-	}
-	public function builder($mo){
-		//tr ru tn
-		$data = [];
-		$cmd = '';
-		if(is_array($mo)){
-			foreach($mo as $key => $val){
-				if(!empty($key)){
-					array_push($data,' /'.strtoupper($key).' "'. $val.'"');
+			if(!is_array($data))throw new Exception("Unable to process");
+				foreach($data as $k => $v){
+					$data_str .= '/' .strtoupper($k) . ' "' .$v.'" ';
 				}
-			}
-		}
-		foreach($data as $result){
-			$cmd .= $result;
-		}		
-		return trim(array_values($this->account)[0] . array_values($this->account)[1]) . $cmd;
-	}
-	
-	public function update($data){
-		try{
-			if(array_key_exists('sc',$data)) throw new Exception("Schedule [sc] for update is not allowed");
-			$cmd = 'SCHTASKS /CHANGE '.$this->builder($data);
-			return $this->execute($cmd);
+
+			return $data_str;
 		}catch(Exception $e){
 			return $e->getMessage();
 		}
 	}
-	public function remove($task){
-		$cmd = 'SCHTASKS /DELETE /TN "'.$task.'" /F';
-		return $this->execute($cmd);
+	public function get_data($data){
+		$gd = '';
+		if(is_array($data)){
+			$gd .= implode(", ",$data);
+		}
+		return $gd;
 	}
-	public function run($task){
-		$cmd = 'SCHTASKS /RUN /TN "'.$task.'"';
-		return $this->execute($cmd);
+	public function query($type,$data){
+		try {
+			if(!is_array($data)) throw new \Exception('Invalid data');
+			if(isset($data['sc']) && !in_array($data['sc'],$this->sch_type)) throw new \Exception('Invalid schedule! Use: ' . $this->get_data($this->sch_type));
+			if(!in_array($type,$this->type)) throw new \Exception('Invalid schedule type! Use: ' . $this->get_data($this->type));
+			
+			if(array_key_exists('sc',$data) && $type == 'change') throw new \Exception("Schedule [sc] for change method is not required.");
+			
+			return $this->execute(self::AB .' /'.strtoupper($type).' '. $this->build($data) . ' ' . $this->overwrite($type));
+		}catch(\Exception $e){
+			return 'ERROR: '.$e->getMessage();
+		}
 	}
-	public function query($task, $format = null){
-		$fo = $format == null ? 'LIST' : $format;
-		$cmd = 'SCHTASKS /QUERY /FO '.$fo.' /V /TN "'.$task.'"';
-		return $this->execute($cmd);
-	}
-	public function queryAll(){
-		$cmd = 'SCHTASKS /QUERY /FO LIST /V';
-		return $this->execute($cmd);
-	}
-	
-	public function stop($task){
-		$cmd = 'SCHTASKS /END /TN "'.$task.'"';
-		return $this->execute($cmd);
+	public function overwrite($type){
+		$no_force = array('change','query');
+		$result = in_array($type,$no_force) ? null : $this->force;
+		return $result;
 	}
 	public function execute($command){
-		$result = shell_exec(trim($command));
-		if($result){
-			return $result;
+		$process = shell_exec(trim($command));
+		if($process){
+			return $process;
 		}else{
-			return 'ERROR: Unable to execute command: ' . $this->lastCmd($command) . ' Tips: Check all parameters and its spelling and or the user privileges.';
+			return 'ERROR: ' . $command;
 		}
 	}
-	
-	protected function whoami(){
-		return $this->execute('whoami');
-	}
-	public function lastCmd($cmd){
-		return '<pre>'.$this->command_str = $cmd.'</pre>';
+	public function notify($result){
+		return strtok($result," ");
 	}
 }
