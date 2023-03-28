@@ -1,5 +1,5 @@
 # Windows-Task-Scheduler-in-PHP
-A basic Windows Task Scheduler in PHP
+A basic Windows Task Scheduler in PHP. Create a windows task using your browser.
 
 ## Usage
 
