@@ -17,16 +17,12 @@ include "../tasks.php";
 use AleksBella\Tools\AB\Tasks;
 $ab = new Tasks();
 $data = array(
-	'sc' => 'monthly',		// Schedule type
+	'sc' => 'monthly',			// Schedule type
 	'tn' => 'Monthly Schedule',	// Task name
 	'tr' => 'notepad.exe',		// App/script to run
 	'sd' => '03/29/2023',		// Schedule date
-	'ru' => 'aleks',		// Run as user
-	'rp' => '123'			// RU password
+	'ru'=> 'teen'				// Run as user
 );
 echo $ab->query('create',$data);
-
+//echo '<pre>'.$ab->query('query',['tn'=>'Monthly Schedule','fo'=>'list']).'</pre>';
 //echo $ab->query('delete',['tn'=>'Monthly Schedule']);
-
-
-
