@@ -17,12 +17,18 @@ include "../tasks.php";
 use AleksBella\Tools\AB\Tasks;
 $ab = new Tasks();
 $data = array(
-	'sc' => 'monthly',			// Schedule type
-	'tn' => 'Monthly Schedule',	// Task name
+	'sc' => 'daily',			// Schedule type
+	'tn' => gethostname(),		// Task name
 	'tr' => 'notepad.exe',		// App/script to run
-	'sd' => '03/29/2023',		// Schedule date
+	'sd' => '04/10/2023',		// Schedule date
 	'ru'=> 'teen'				// Run as user
 );
-echo $ab->query('create',$data);
-//echo '<pre>'.$ab->query('query',['tn'=>'Monthly Schedule','fo'=>'list']).'</pre>';
+echo '<pre>';
+//echo $ab->rawQuery('dir'); 
+//echo $ab->query('create',$data); 
 //echo $ab->query('delete',['tn'=>'Monthly Schedule']);
+echo $ab->query('query',['v /tn'=>gethostname(),'fo'=>'list']); // [v /tn="task name"] is advanced properties of the task to the display. This parameter is valid with the LIST or CSV output formats.
+echo '</pre>';
+
+
+
