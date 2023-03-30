@@ -7,7 +7,7 @@ namespace AleksBella\Tools\AB;
 	 * @copyright Copyright (c) 2023
 	 * @license   http://opensource.org/licenses/gpl-3.0.html GNU Public License
 	 * @link      https://github.com/aleksbella
-	 * @version   1.1.2
+	 * @version   1.2.2
 //===============================================================
 // 	 *  USE WITH YOUR OWN RISK
 //===============================================================
@@ -19,22 +19,30 @@ class Tasks {
 	private $sch_type = array('minute','daily','hourly','monthly','weekly','once','onstart','onlogon');
 	private $type = array('change','create','delete','end','run','query');
 	private $params = array('z','f');
-	private $live_exec = true;
-	public function __construct(){
-		if(is_bool($this->force)){
-			$this->force = '/F';
+	private $output_type = array('default', 'live');
+	public function __construct($output_type = 'default'){
+		try{
+			if(!in_array($output_type, $this->output_type)) throw new \Exception("Invalid output type");
+			if($this->force === true){
+				$this->force = '/F';
+			}
+			$this->output_type = $output_type;			
+		}catch(\Exception $e){
+			die($e->getMessage());
 		}
 	}
-	
+	public function show_err($type,$message){
+		return trigger_error($message,2);
+	}
 	public function build($data){
 			$data_str = '';
 			$z_param = '';
 			try {
-				if(!is_array($data))throw new \Exception("Unable to process");
-				if(array_key_exists('z',$data)){
-					unset($data['z']);
-					$z_param = '/Z /ET "' . date("H:i:s",strtotime("+20 MINUTE")).'"';
-				}
+				if(!is_array($data))throw new \Exception("Unable to process data");
+					if(array_key_exists('z',$data)){
+						unset($data['z']);
+						$z_param = '/Z /ET "' . date("H:i:s",strtotime("+20 MINUTE")).'"';
+					}
 				foreach($data as $k => $v){				
 					$data_str .= '/' .strtoupper($k) . ' "' .$v.'" ';
 				}
@@ -44,7 +52,7 @@ class Tasks {
 		}
 	}
 	
-	public function get_data($data){
+	private function get_data($data){
 		$gd = '';
 		if(is_array($data)){
 			$gd .= implode(", ",$data);
@@ -62,39 +70,44 @@ class Tasks {
 			return 'ERROR: '.$e->getMessage();
 		}
 	}
+	public function rawQuery($command = null){
+		if(empty($command) || is_array($command)){
+			return null;
+		}
+		return $this->execute($command);
+		
+	}
 	public function overwrite($type){
 		$no_force = array('change','query');
 		$result = in_array($type,$no_force) ? null : $this->force;
 		return $result;
 	}
 	public function execute($command){
-		if($this->live_exec === true){		
-			$handle = popen($command ."2>&1", 'r');
-			$live_output     = "";
-			$complete_output = "";
-			$result = "";
-			while (!feof($handle)){
-				$live_output     = fread($handle, 4096);
-				$complete_output = $complete_output . $live_output;
-				$result .= $live_output;
-				@ flush();
-			}
-			pclose($handle);
-			return $result;
-			
-		}else{
-		
+		switch($this->output_type){
+			default:
+			case 'default':			
 			$process = shell_exec(trim($command).' 2>&1');
-			if($process){
-				return $process;
-			}else{
-				return 'ERROR: ' . $command;
-			}
-		
+			return $process;
+			break;
+			
+			case 'live':
+				$handle = popen($command ."2>&1", 'r');
+				$live_output     = "";
+				$complete_output = "";
+				$result = "";
+				while (!feof($handle)){
+					$live_output     = fread($handle, 4096);
+					$complete_output = $complete_output . $live_output;
+					$result .= $live_output;
+					@ flush();
+				}
+				pclose($handle);
+				return $result;
+			break;
+			
 		}
-		
 	}
-	public function notify($result){
+	private function notify($result){
 		$p = strtok($result," ");
 		return $p === 'SUCCESS:' ? '' : 'ERROR: ' . $result;
 	}
