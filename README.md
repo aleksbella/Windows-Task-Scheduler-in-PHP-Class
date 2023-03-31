@@ -1,6 +1,17 @@
 # Windows-Task-Scheduler-in-PHP
 A basic Windows Task Scheduler in PHP. Create a windows task schedule without jumping into the system.
 
+---
+## Table of Contents
+
+ - [Installation](https://github.com/aleksbella/Windows-Task-Scheduler-in-PHP-Class/tree/91ad0712bd4f066ca45e392d602312946dcdcae2#installation)
+ - [Usage/Examples](https://github.com/aleksbella/Windows-Task-Scheduler-in-PHP-Class/tree/91ad0712bd4f066ca45e392d602312946dcdcae2#usageexamples)
+ - [Create](https://github.com/aleksbella/Windows-Task-Scheduler-in-PHP-Class/tree/91ad0712bd4f066ca45e392d602312946dcdcae2#create)
+ - [Change or to update](https://github.com/aleksbella/Windows-Task-Scheduler-in-PHP-Class/tree/91ad0712bd4f066ca45e392d602312946dcdcae2#change-or-to-update)
+ - [Other values](https://github.com/aleksbella/Windows-Task-Scheduler-in-PHP-Class/tree/91ad0712bd4f066ca45e392d602312946dcdcae2#other-values)
+ - [Parameters](https://github.com/aleksbella/Windows-Task-Scheduler-in-PHP-Class/tree/91ad0712bd4f066ca45e392d602312946dcdcae2#parameters)
+ - [Contributing](https://github.com/aleksbella/Windows-Task-Scheduler-in-PHP-Class/tree/91ad0712bd4f066ca45e392d602312946dcdcae2#contributing)
+
 ## Installation
 
 ```php
