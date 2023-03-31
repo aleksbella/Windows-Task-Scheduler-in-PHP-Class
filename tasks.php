@@ -34,7 +34,7 @@ class Tasks {
 		}
 		return $gd;
 	}
-	public function rawquery($type,$data){
+	public function rawquery($command){
 		if(empty($command) || is_array($command)){
 			return null;
 		}
