@@ -15,19 +15,19 @@ $ab = new Tasks();
  ```php
 	$data = array(
 		'sc' => 'monthly',		//'minute','hourly','daily','weekly','monthly', etc...
-		'tn' => 'Aleks Schedule',
+		'tn' => 'My Schedule',		//Task name
 		'tr' => 'c:\folder\myapp.exe',	//full path
 		'f'				////Specifies to create the task and suppress warnings if the specified task already exists.
 	);
 	$ab->schedule('create',$data);
 ```
 ---
-### Change or Update
+### Change or to update
  ```php
 	$data = array(		
-		'tn' => 'Aleks Schedule',
-		'tr' => 'c:\folder\new-myapp.exe',	//full path
-		'st' => '15:20:00'
+		'tn' => 'Aleks Schedule',		//Task name
+		'tr' => 'c:\folder\new-myapp.exe',	//Full path
+		'st' => '15:20:00'			//Start time for the task
 	);
 	$ab->schedule('change',$data);
 ```
@@ -77,6 +77,8 @@ $ab->schedule('delete',['tn'=>'My Schedule']);	//Remove selected schedule
 $ab->schedule('end',['tn'=>'My Schedule']);	//Stop running schedule
 
 $ab->schedule('run',['tn'=>'My Schedule']);	//Run selected schedule
+
+$ab->rawquery($command);			//Run and execute your own windows command
 ```
 
 ### Contributing
