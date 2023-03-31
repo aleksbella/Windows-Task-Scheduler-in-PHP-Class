@@ -7,14 +7,14 @@
 	 * @copyright Copyright (c) 2023
 	 * @license   http://opensource.org/licenses/gpl-3.0.html GNU Public License
 	 * @link      https://github.com/aleksbella
-	 * @version   1.1.2
+	 * @version   1.3.0
 //===============================================================
 // 	 *  USE WITH YOUR OWN RISK
 //===============================================================
 */
 
 include "../tasks.php";
-use AleksBella\Tools\AB\Tasks;
+use AleksBella\Scheduler\Tasks;
 $ab = new Tasks();
 ?>
 <!DOCTYPE html>
@@ -54,8 +54,16 @@ $ab = new Tasks();
 					$data['st'] = $ttime;
 					$data['sd'] = date('m/d/Y',strtotime($tdate));
 					$data['tr'] = 'notepad.exe';
+					$data['et'] = '20:00';
 					
-					echo $ab->query('create',$data);
+					//f = Create the task and suppress warnings if the specified task already exists.
+					//z = Delete the task upon the completion of its schedule.
+					
+					$force = array('f','z');
+					
+					$process = array_merge($data,$force);
+					
+					echo $ab->schedule('create',$process);
 				}
 				
 			?>
