@@ -5,7 +5,7 @@ A basic Windows Task Scheduler in PHP. Create a windows task schedule without ju
 
 ```php
 include_once "./includes/tasks.php";
-use AleksBella\Tools\AB\Tasks;
+use AleksBella\Scheduler\Tasks;
 $ab = new Tasks();
 ```
 
@@ -16,9 +16,10 @@ $ab = new Tasks();
 	$data = array(
 		'sc' => 'monthly',		//'minute','hourly','daily','weekly','monthly', etc...
 		'tn' => 'Aleks Schedule',
-		'tr' => 'c:\folder\myapp.exe'	//full path
+		'tr' => 'c:\folder\myapp.exe',	//full path
+		'f'				////Specifies to create the task and suppress warnings if the specified task already exists.
 	);
-	$ab->query('create',$data);
+	$ab->schedule('create',$data);
 ```
 ---
 ### Change or Update
@@ -28,7 +29,7 @@ $ab = new Tasks();
 		'tr' => 'c:\folder\new-myapp.exe',	//full path
 		'st' => '15:20:00'
 	);
-	$ab->query('change',$data);
+	$ab->schedule('change',$data);
 ```
 
 >**Note**: Scheduletype ['sc'] could NOT be change, returns error if added.
@@ -56,6 +57,11 @@ $data['et'] = '14:50:00';		//Time of day that a minute or hourly task schedule e
 $data['du'] = '20:00:00';		//Maximum length of time for a minute or hourly schedule in 24-hour format. Works with MINUTE & HOURLY schedule.
 $data['sd'] = '04/01/2023';		//Date on which the task schedule starts. (Format: Mm/dd/YYYY)
 $data['ed'] = '12/31/2023';		//Date on which the schedule ends. It isn't valid in a ONCE, ONSTART, ONLOGON, or ONIDLE schedule.
+$data['k'];				//Stops the program that the task runs at the time specified by ['et'] or ['du'].
+$data['it'];				//Run the scheduled task only when the run as user (the user account under which the task runs) is logged on. 
+$data['np'];				//No password is stored. The task runs non-interactively as the given user. Only local resources are available.
+$data['z'];				//Delete the task upon the completion of its schedule.
+$data['f'];				//Create the task and suppress warnings if the specified task already exists.
 ```	
 
 ---
@@ -66,11 +72,11 @@ $data['ed'] = '12/31/2023';		//Date on which the schedule ends. It isn't valid i
 
 ### Parameters
 ```php
-$ab->query('delete',['tn'=>'My Schedule']);	//Remove selected schedule
+$ab->schedule('delete',['tn'=>'My Schedule']);	//Remove selected schedule
 
-$ab->query('end',['tn'=>'My Schedule']);	//Stop running schedule
+$ab->schedule('end',['tn'=>'My Schedule']);	//Stop running schedule
 
-$ab->query('run',['tn'=>'My Schedule']);	//Run selected schedule
+$ab->schedule('run',['tn'=>'My Schedule']);	//Run selected schedule
 ```
 
 ### Contributing
