@@ -7,28 +7,29 @@
 	 * @copyright Copyright (c) 2023
 	 * @license   http://opensource.org/licenses/gpl-3.0.html GNU Public License
 	 * @link      https://github.com/aleksbella
-	 * @version   1.1.2
+	 * @version   1.3.0
 //===============================================================
 // 	 *  USE WITH YOUR OWN RISK
 //===============================================================
 */
 
 include "../tasks.php";
-use AleksBella\Tools\AB\Tasks;
+use AleksBella\Scheduler\Tasks;
 $ab = new Tasks();
 $data = array(
 	'sc' => 'daily',			// Schedule type
-	'tn' => gethostname(),		// Task name
+	'tn' => 'My Task',			// Task name
 	'tr' => 'notepad.exe',		// App/script to run
 	'sd' => '04/10/2023',		// Schedule date
-	'ru'=> 'teen'				// Run as user
+	'ru'=> 'teen',				// Run as user
+	'k',						//Stops the program that the task runs at the time specified by [et] or [du].
+	'z',						//Specifies to delete the task upon the completion of its schedule.
+	'et'=>'20:00',				//Specifies the time of day that a minute or hourly task schedule ends in 24-hour format. 
+	'f'							//Specifies to create the task and suppress warnings if the specified task already exists.
 );
-echo '<pre>';
-//echo $ab->rawQuery('dir'); 
-//echo $ab->query('create',$data); 
-//echo $ab->query('delete',['tn'=>'Monthly Schedule']);
-echo $ab->query('query',['v /tn'=>gethostname(),'fo'=>'list']); // [v /tn="task name"] is advanced properties of the task to the display. This parameter is valid with the LIST or CSV output formats.
-echo '</pre>';
 
+echo '<pre>';
+echo $ab->schedule('create',$data);
+echo '</pre>';
 
 
