@@ -27,60 +27,86 @@ $ab = new Tasks();
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet" type="text/css" />
 
 </head>
-<body>
-
-<div class="navbar bg-base-300">
-  <div class="flex-1">
-    <a class="btn btn-ghost normal-case text-xl">AB WPS</a>
-  </div>
-  <div class="flex-none">
-    <button class="btn btn-square btn-ghost">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-5 h-5 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path></svg>
-    </button>
-  </div>
-</div>
-
-<div class="h-screen flex justify-center items-center">	
-	<div class="w-1/2 bg-base-300 p-4 rounded-lg shadow-lg">
+<body class="bg-base-200">
+<div class="h-screen flex">	
+	<div class="w-96 bg-base-100 p-7 shadow-lg">
 		<form action="" method="POST">
-		<div class="overflow-y-scroll max-h-96 my-5">
+		
 			<?php
 				if(isset($_POST['set'])){
 					extract($_POST);
-				
+					$data = array();
 					$data['sc'] = $ttype;
 					$data['tn'] = $tname;
 					$data['tr'] = 'notepad.exe';
 					$data['st'] = $ttime;
 					$data['sd'] = date('m/d/Y',strtotime($tdate));
-					$data['tr'] = 'notepad.exe';
-					$data['et'] = '20:00';
+					$data['et'] = $etime;
+					/*
+						f = Create the task and suppress warnings if the specified task already exists.
+						z = Delete the task upon the completion of its schedule.
+					*/					
+					$params = array('z','f');						
 					
-					//f = Create the task and suppress warnings if the specified task already exists.
-					//z = Delete the task upon the completion of its schedule.
+					$process = array_merge($data,$params);
 					
-					$force = array('f','z');
-					
-					$process = array_merge($data,$force);
-					
+					echo '<div class="bg-yellow-400 p-5 mb-5">';
 					echo $ab->schedule('create',$process);
+					echo '</div>';
+				}
+				
+				if(isset($_POST['rbtn'])){
+					$rname = $_POST['rname'];
+					echo '<div class="bg-yellow-400 p-5 mb-5">';
+					echo $ab->schedule('delete',['tn'=>$rname,'f']);
+					echo '</div>';
 				}
 				
 			?>
-		</div>
-			<div class="form-control space-y-4">
-				<input type="text" class="input input-bordered" name="tname" placeholder="Task name">
-				<input type="time" step="1" class="input input-bordered" name="ttime" placeholder="Time">
-				<input type="date" class="input input-bordered" name="tdate" placeholder="Starting date">
-				<select class="select select-bordered" name="ttype">
-					<option value="daily">Daily</option>
-					<option value="minutes">Minute</option>
-					<option value="hourly">Hourly</option>
-					<option value="weekly">Weekly</option>
-					<option value="monthly">Monthly</option>
-				</select>
-				<button type="submit" name="set" class="btn btn-primary">Set</button>
+
+			<div class="space-y-4">
+				<div class="mb-3 form-control">
+					<label>Schedule Type</label>
+					<select class="select select-bordered" name="ttype">
+						<option value="once">Once</option>
+						<option value="daily">Daily</option>
+						<option value="minute">Minute</option>
+						<option value="hourly">Hourly</option>
+						<option value="weekly">Weekly</option>
+						<option value="monthly">Monthly</option>
+						<option value="onstart">Onstart</option>
+						<option value="onlogon">Onlogon</option>
+						<option value="onidle">Onidle</option>
+					</select>
+				</div>
+				<div class="mb-3 form-control">
+					<label>Task name</label>
+					<input type="text" class="input input-bordered" name="tname" placeholder="Task name" value="My Schedule">
+				</div>
+				<div class="mb-3 form-control">
+					<label>Start Time</label>
+					<input type="time" step="1" class="input input-bordered" name="ttime" value="<?=date("H:i:s");?>">
+				</div>
+				
+				<div class="mb-3 form-control">
+					<label>End Time</label>
+					<input type="time" step="1" class="input input-bordered" name="etime" value="<?=date("H:i:s",strtotime("+30 MINUTE"));?>">
+				</div>
+				
+				<div class="mb-3 form-control">
+					<label>Starting Date</label>
+					<input type="date" value="<?=date("Y-m-d");?>" class="input input-bordered" name="tdate" placeholder="Starting date">
+				</div>
+						
+				<button type="submit" name="set" class="btn btn-primary">Set Schedule</button>
 			</div>
+		</form>
+		
+		
+		<div class="divider"></div>
+		<form method="post">
+			<label>Enter task name below to remove. This will return error if task name does not exists or not specified.</label>
+			<input type="text" name="rname" class="input input-bordered mr-3 my-3 w-full block" placeholder="Enter task name"><button class="btn" type="submit" name="rbtn">Remove</button>
 		</form>
 	</div>
 </div>
