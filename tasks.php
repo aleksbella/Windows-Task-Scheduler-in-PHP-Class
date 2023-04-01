@@ -15,7 +15,7 @@ namespace AleksBella\Scheduler;
 date_default_timezone_set('Asia/Manila');
 class Tasks {
 	const AB = 'SCHTASKS';
-	private $sch_type = array('minute','daily','hourly','monthly','weekly','once','onstart','onlogon');
+	private $sch_type = array('minute','daily','hourly','monthly','weekly','once','onstart','onlogon','onidle');
 	private $type = array('change','create','delete','end','run','query');
 	private $output_type = array('default', 'live');
 	public function __construct($output_type = 'default'){
@@ -34,6 +34,7 @@ class Tasks {
 		}
 		return $gd;
 	}
+
 	public function rawquery($command){
 		if(empty($command) || is_array($command)){
 			return null;
