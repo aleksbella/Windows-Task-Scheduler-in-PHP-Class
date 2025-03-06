@@ -22,17 +22,20 @@ class Tasks {
     private static array $outputTypes = ['default', 'live'];
     
     private string $outputType;
+    private string $logFile;
 
     /**
-     * Constructor to set output type
+     * Constructor to set output type and log file
      * @param string $outputType
+     * @param string $logFile
      * @throws \Exception
      */
-    public function __construct(string $outputType = 'default') {
+    public function __construct(string $outputType = 'default', string $logFile = 'scheduler.log') {
         if (!in_array($outputType, self::$outputTypes, true)) {
             throw new \Exception("Invalid output type");
         }
         $this->outputType = $outputType;
+        $this->logFile = $logFile;
     }
 
     /**
@@ -62,7 +65,9 @@ class Tasks {
         }
 
         $command = self::COMMAND . ' /' . strtoupper($type) . ' ' . implode(' ', $commandParts);
-        return $this->execute($command);
+        $result = $this->execute($command);
+        $this->logCommand($command, $result);
+        return $result;
     }
 
     /**
@@ -99,5 +104,16 @@ class Tasks {
         pclose($handle);
 
         return $output;
+    }
+
+    /**
+     * Log executed commands
+     * @param string $command
+     * @param string $result
+     * @return void
+     */
+    private function logCommand(string $command, string $result): void {
+        $logEntry = sprintf("[%s] COMMAND: %s\nRESULT: %s\n\n", date('Y-m-d H:i:s'), $command, $result);
+        file_put_contents($this->logFile, $logEntry, FILE_APPEND | LOCK_EX);
     }
 }
