@@ -17,7 +17,7 @@ A basic Windows Task Scheduler in PHP. Create a windows task schedule without ju
 ```php
 include_once "./includes/tasks.php";
 use AleksBella\Scheduler\Tasks;
-$ab = new Tasks();
+$task = new Tasks();
 ```
 
 ## Usage/Examples
@@ -30,7 +30,7 @@ $ab = new Tasks();
 		'tr' => 'c:\folder\myapp.exe',	//full path
 		'f'				////Specifies to create the task and suppress warnings if the specified task already exists.
 	);
-	$ab->schedule('create',$data);
+	$task->schedule('create',$data);
 ```
 ---
 ### Change or to update
@@ -40,7 +40,7 @@ $ab = new Tasks();
 		'tr' => 'c:\folder\new-myapp.exe',	//Full path
 		'st' => '15:20:00'			//Start time for the task
 	);
-	$ab->schedule('change',$data);
+	$task->schedule('change',$data);
 ```
 
 >**Note**: Scheduletype ['sc'] could NOT be change, returns error if added.
@@ -83,13 +83,13 @@ $data['f'];				//Create the task and suppress warnings if the specified task alr
 
 ### Parameters
 ```php
-$ab->schedule('delete',['tn'=>'My Schedule']);	//Remove selected schedule
+$task->schedule('delete',['tn'=>'My Schedule']);	//Remove selected schedule
 
-$ab->schedule('end',['tn'=>'My Schedule']);	//Stop running schedule
+$task->schedule('end',['tn'=>'My Schedule']);	//Stop running schedule
 
-$ab->schedule('run',['tn'=>'My Schedule']);	//Run selected schedule
+$task->schedule('run',['tn'=>'My Schedule']);	//Run selected schedule
 
-$ab->rawquery($command);			//Run and execute your own windows command
+$task->rawquery($command);			//Run and execute your own windows command
 ```
 
 ### Contributing
